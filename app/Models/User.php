@@ -56,4 +56,14 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    public function personalInformation()
+    {
+        return $this->hasOne(PersonalInformation::class);
+    }
+
+    public function calories()
+    {
+        return $this->hasMany(Calory::class);
+    }
 }

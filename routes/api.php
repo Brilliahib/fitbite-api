@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CaloryController;
+use App\Http\Controllers\PersonalInformationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,7 +21,29 @@ Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:api')->group(function () {
-    Route::get('/auth/get-auth', [AuthController::class, 'getAuth']);
-    Route::put('/auth/change-password', [AuthController::class, 'changePassword']);
-    Route::put('/auth/update-account', [AuthController::class, 'updateAccount']);
+    // Auth
+    Route::prefix('auth')->group(function () {
+        Route::get('/get-auth', [AuthController::class, 'getAuth']);
+        Route::put('/change-password', [AuthController::class, 'changePassword']);
+        Route::put('/update-account', [AuthController::class, 'updateAccount']);
+    });
+
+    // Personal Information
+    Route::prefix('personal-information')->group(function () {
+        Route::get('/', [PersonalInformationController::class, 'index']);
+        Route::post('/', [PersonalInformationController::class, 'store']);
+        Route::put('/', [PersonalInformationController::class, 'update']);
+        Route::delete('/', [PersonalInformationController::class, 'destroy']);
+        Route::get('/check', [PersonalInformationController::class, 'check']);
+    });
+
+    // Calory
+    Route::prefix('calories')->group(function () {
+        Route::get('/', [CaloryController::class, 'index']);
+        Route::post('/', [CaloryController::class, 'store']);
+        Route::put('/{id}', [CaloryController::class, 'update']);
+        Route::delete('/{id}', [CaloryController::class, 'destroy']);
+        Route::get('/today', [CaloryController::class, 'getCaloriesToday']);
+        Route::get('/week', [CaloryController::class, 'getCaloriesWeek']);
+    });
 });
