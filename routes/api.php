@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CaloryController;
 use App\Http\Controllers\FoodController;
+use App\Http\Controllers\MealPlanController;
 use App\Http\Controllers\PersonalInformationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -59,5 +60,13 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('blog')->group(function () {
         Route::get('/', [BlogController::class, 'index']);
         Route::get('/{slug}', [BlogController::class, 'detail']);
+    });
+
+    // Meal Plan
+    Route::prefix('meal-plans')->group(function () {
+        Route::get('/', [MealPlanController::class, 'index']);
+        Route::post('/', [MealPlanController::class, 'store']);
+        Route::put('/{id}', [MealPlanController::class, 'update']);
+        Route::delete('/{id}', [MealPlanController::class, 'destroy']);
     });
 });
