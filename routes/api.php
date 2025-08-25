@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CaloryController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\PersonalInformationController;
@@ -48,8 +49,15 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/week', [CaloryController::class, 'getCaloriesWeek']);
     });
 
+    // Food
     Route::prefix('food')->group(function () {
         Route::get('/', [FoodController::class, 'index']);
         Route::get('/{id}', [FoodController::class, 'detail']);
+    });
+
+    // Blog
+    Route::prefix('blog')->group(function () {
+        Route::get('/', [BlogController::class, 'index']);
+        Route::get('/{slug}', [BlogController::class, 'detail']);
     });
 });
