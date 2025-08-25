@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CaloryController;
+use App\Http\Controllers\FoodController;
 use App\Http\Controllers\PersonalInformationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -45,5 +46,10 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{id}', [CaloryController::class, 'destroy']);
         Route::get('/today', [CaloryController::class, 'getCaloriesToday']);
         Route::get('/week', [CaloryController::class, 'getCaloriesWeek']);
+    });
+
+    Route::prefix('food')->group(function () {
+        Route::get('/', [FoodController::class, 'index']);
+        Route::get('/{id}', [FoodController::class, 'detail']);
     });
 });
