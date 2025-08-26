@@ -5,17 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MealPlan extends Model
+class CommunityChat extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'meal',
-        'gram',
-        'meal_date',
-        'meal_time',
-        'name'
+        'message',
+        'image',
     ];
 
     public function user()

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CaloryController;
+use App\Http\Controllers\CommunityChatController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\MealPlanController;
 use App\Http\Controllers\PersonalInformationController;
@@ -68,5 +69,13 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/', [MealPlanController::class, 'store']);
         Route::put('/{id}', [MealPlanController::class, 'update']);
         Route::delete('/{id}', [MealPlanController::class, 'destroy']);
+    });
+
+    // Community Chat
+    Route::prefix('community-chats')->group(function () {
+        Route::get('/', [CommunityChatController::class, 'index']);
+        Route::post('/', [CommunityChatController::class, 'store']);
+        Route::put('/{id}', [CommunityChatController::class, 'update']);
+        Route::delete('/{id}', [CommunityChatController::class, 'destroy']);
     });
 });

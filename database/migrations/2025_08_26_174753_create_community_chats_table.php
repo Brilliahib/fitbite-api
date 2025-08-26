@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('meal_plans', function (Blueprint $table) {
+        Schema::create('community_chats', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('name');
-            $table->string('meal');
-            $table->string('gram');
-            $table->date('meal_date');
-            $table->time('meal_time');
+            $table->text('message');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('meal_plans');
+        Schema::dropIfExists('community_chats');
     }
 };

@@ -66,4 +66,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Calory::class);
     }
+
+    public function communityChats()
+    {
+        return $this->hasMany(CommunityChat::class);
+    }
 }

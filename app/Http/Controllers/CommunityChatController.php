@@ -2,123 +2,129 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MealPlan;
+use App\Models\CommunityChat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
-class MealPlanController extends Controller
+class CommunityChatController extends Controller
 {
     /**
-     * Get all meal plans for logged-in user
+     * Get all community chats (no filter by user_id)
      */
     public function index()
     {
-        $mealPlans = MealPlan::where('user_id', Auth::id())->get();
+        $chats = CommunityChat::with('user:id,name')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return response()->json([
             'meta' => [
                 'status' => 'success',
                 'statusCode' => 200,
-                'message' => 'List meal plans berhasil diambil'
+                'message' => 'List community chat berhasil diambil'
             ],
-            'data' => $mealPlans
+            'data' => $chats
         ], 200);
     }
 
     /**
-     * Store new meal plan
+     * Store new community chat
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string',
-            'meal' => 'required|string',
-            'gram' => 'required|string',
-            'meal_date' => 'required|date',
-            'meal_time' => 'required|date_format:H:i',
+            'message' => 'required|string',
+            'image'   => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
         ]);
 
         $validated['user_id'] = Auth::id();
 
-        $mealPlan = MealPlan::create($validated);
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('community_chat', 'public');
+            $validated['image'] = $path;
+        }
+
+        $chat = CommunityChat::create($validated);
 
         return response()->json([
             'meta' => [
                 'status' => 'success',
                 'statusCode' => 201,
-                'message' => 'Meal plan berhasil ditambahkan'
+                'message' => 'Pesan berhasil ditambahkan'
             ],
-            'data' => $mealPlan
+            'data' => $chat
         ], 201);
     }
 
     /**
-     * Update meal plan
+     * Update community chat (only own message)
      */
     public function update(Request $request, $id)
     {
-        $mealPlan = MealPlan::where('id', $id)
+        $chat = CommunityChat::where('id', $id)
             ->where('user_id', Auth::id())
             ->first();
 
-        if (!$mealPlan) {
+        if (!$chat) {
             return response()->json([
                 'meta' => [
                     'status' => 'error',
                     'statusCode' => 404,
-                    'message' => 'Meal plan tidak ditemukan'
+                    'message' => 'Pesan tidak ditemukan atau bukan milik Anda'
                 ],
                 'data' => null
             ], 404);
         }
 
         $validated = $request->validate([
-            'name' => 'sometimes|string',
-            'meal' => 'sometimes|string',
-            'gram' => 'sometimes|string',
-            'meal_date' => 'sometimes|date',
-            'meal_time' => 'sometimes|date_format:H:i',
+            'message' => 'sometimes|string',
+            'image' => 'nullable|string',
         ]);
 
-        $mealPlan->update($validated);
+        $chat->update($validated);
 
         return response()->json([
             'meta' => [
                 'status' => 'success',
                 'statusCode' => 200,
-                'message' => 'Meal plan berhasil diperbarui'
+                'message' => 'Pesan berhasil diperbarui'
             ],
-            'data' => $mealPlan
+            'data' => $chat
         ], 200);
     }
 
     /**
-     * Delete meal plan
+     * Delete community chat (only own message)
      */
     public function destroy($id)
     {
-        $mealPlan = MealPlan::where('id', $id)
+        $chat = CommunityChat::where('id', $id)
             ->where('user_id', Auth::id())
             ->first();
 
-        if (!$mealPlan) {
+        if (!$chat) {
             return response()->json([
                 'meta' => [
                     'status' => 'error',
                     'statusCode' => 404,
-                    'message' => 'Meal plan tidak ditemukan'
+                    'message' => 'Pesan tidak ditemukan atau bukan milik Anda'
                 ],
                 'data' => null
             ], 404);
         }
 
-        $mealPlan->delete();
+        if ($chat->image && Storage::disk('public')->exists($chat->image)) {
+            Storage::disk('public')->delete($chat->image);
+        }
+
+        $chat->delete();
 
         return response()->json([
             'meta' => [
                 'status' => 'success',
                 'statusCode' => 200,
-                'message' => 'Meal plan berhasil dihapus'
+                'message' => 'Pesan berhasil dihapus'
             ],
             'data' => null
         ], 200);
