@@ -6,6 +6,7 @@ use App\Models\Calory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CaloryController extends Controller
 {
@@ -104,5 +105,42 @@ class CaloryController extends Controller
             ->get();
 
         return $this->responseFormat('success', 200, 'Total kalori minggu ini berhasil diambil', $calories);
+    }
+
+    // Get summary calories
+    public function getSummaryCalories()
+    {
+        $userId = Auth::id();
+
+        // Get Personal Information DB
+        $personalInfo = DB::table('personal_information')
+            ->where('user_id', $userId)
+            ->first();
+
+        if (!$personalInfo || !$personalInfo->max_calories) {
+            return $this->responseFormat('error', 404, 'Data personal information atau max_calories tidak ditemukan');
+        }
+
+        $maxCalories = $personalInfo->max_calories;
+
+        // sum calories today
+        $totalToday = Calory::where('user_id', $userId)
+            ->whereDate('created_at', Carbon::today())
+            ->sum('calories');
+
+        // rest calories
+        $restCalories = max($maxCalories - $totalToday, 0);
+
+        // percentage
+        $percentageCalories = $maxCalories > 0 ? ($totalToday / $maxCalories) * 100 : 0;
+        $percentageRestCalories = $maxCalories > 0 ? ($restCalories / $maxCalories) * 100 : 0;
+
+        return $this->responseFormat('success', 200, 'Summary kalori berhasil diambil', [
+            'max_calories' => $maxCalories,
+            'rest_calories' => $restCalories,
+            'calories_today' => $totalToday,
+            'percentage_calories' => round($percentageCalories, 2),
+            'percentage_rest_calories' => round($percentageRestCalories, 2),
+        ]);
     }
 }

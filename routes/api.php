@@ -49,6 +49,7 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{id}', [CaloryController::class, 'destroy']);
         Route::get('/today', [CaloryController::class, 'getCaloriesToday']);
         Route::get('/week', [CaloryController::class, 'getCaloriesWeek']);
+        Route::get('/summary', [CaloryController::class, 'getSummaryCalories']);
     });
 
     // Food
