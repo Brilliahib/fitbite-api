@@ -107,6 +107,56 @@ class CaloryController extends Controller
         return $this->responseFormat('success', 200, 'Total kalori minggu ini berhasil diambil', $calories);
     }
 
+    // Get Daily Calories for the Last 7 Days
+    public function getDailyCaloriesWeek()
+    {
+        $userId = Auth::id();
+
+        $firstCalory = Calory::where('user_id', $userId)
+            ->orderBy('created_at', 'asc')
+            ->first();
+
+        if (!$firstCalory) {
+            return $this->responseFormat(
+                'success',
+                200,
+                'Belum ada data kalori untuk user ini',
+                null
+            );
+        }
+
+        $firstDate = Carbon::parse($firstCalory->created_at)->startOfDay();
+        $today = Carbon::today();
+
+        $weekIndex = floor($firstDate->diffInDays($today) / 7);
+
+        $startDate = $firstDate->copy()->addDays($weekIndex * 7);
+        $endDate = $startDate->copy()->addDays(6)->endOfDay();
+
+        $calories = Calory::where('user_id', $userId)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->selectRaw('DATE(created_at) as date, SUM(calories) as total')
+            ->groupBy('date')
+            ->orderBy('date', 'asc')
+            ->pluck('total', 'date');
+
+        $result = [];
+        for ($i = 0; $i < 7; $i++) {
+            $date = $startDate->copy()->addDays($i)->toDateString();
+            $result[] = [
+                'date' => $date,
+                'total_calories' => $calories[$date] ?? 0,
+            ];
+        }
+
+        return $this->responseFormat(
+            'success',
+            200,
+            "Total kalori harian minggu aktif berhasil diambil (minggu ke-" . ($weekIndex + 1) . ")",
+            $result
+        );
+    }
+
     // Get summary calories
     public function getSummaryCalories()
     {

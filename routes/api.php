@@ -50,6 +50,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/today', [CaloryController::class, 'getCaloriesToday']);
         Route::get('/week', [CaloryController::class, 'getCaloriesWeek']);
         Route::get('/summary', [CaloryController::class, 'getSummaryCalories']);
+        Route::get('/daily-week', [CaloryController::class, 'getDailyCaloriesWeek']);
     });
 
     // Food
