@@ -7,6 +7,7 @@ use App\Http\Controllers\CommunityChatController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\MealPlanController;
 use App\Http\Controllers\PersonalInformationController;
+use App\Http\Controllers\WeeklyProgressController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -79,5 +80,13 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/', [CommunityChatController::class, 'store']);
         Route::put('/{id}', [CommunityChatController::class, 'update']);
         Route::delete('/{id}', [CommunityChatController::class, 'destroy']);
+    });
+
+    // Weekly Progress
+    Route::prefix('weekly-progress')->group(function () {
+        Route::get('/', [WeeklyProgressController::class, 'index']);
+        Route::post('/', [WeeklyProgressController::class, 'store']);
+        Route::put('/{id}', [WeeklyProgressController::class, 'update']);
+        Route::delete('/{id}', [WeeklyProgressController::class, 'destroy']);
     });
 });
