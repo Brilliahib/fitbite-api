@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CaloryController;
+use App\Http\Controllers\CommunityChatAnswerController;
 use App\Http\Controllers\CommunityChatController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\MealPlanController;
@@ -77,9 +78,18 @@ Route::middleware('auth:api')->group(function () {
     // Community Chat
     Route::prefix('community-chats')->group(function () {
         Route::get('/', [CommunityChatController::class, 'index']);
+        Route::get('/{id}', [CommunityChatController::class, 'detail']);
         Route::post('/', [CommunityChatController::class, 'store']);
         Route::put('/{id}', [CommunityChatController::class, 'update']);
         Route::delete('/{id}', [CommunityChatController::class, 'destroy']);
+    });
+
+    // Community Chat Answers
+    Route::prefix('community-chat-answers')->group(function () {
+        Route::get('/{communityChatId}', [CommunityChatAnswerController::class, 'index']);
+        Route::post('/{community_chat_id}', [CommunityChatAnswerController::class, 'store']);
+        Route::put('/{id}', [CommunityChatAnswerController::class, 'update']);
+        Route::delete('/{id}', [CommunityChatAnswerController::class, 'destroy']);
     });
 
     // Weekly Progress

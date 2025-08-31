@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CommunityChat extends Model
+class CommunityChatAnswer extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'community_chat_id',
         'user_id',
         'message',
         'image',
@@ -20,8 +21,8 @@ class CommunityChat extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function answers()
+    public function communityChat()
     {
-        return $this->hasMany(CommunityChatAnswer::class);
+        return $this->belongsTo(CommunityChat::class);
     }
 }

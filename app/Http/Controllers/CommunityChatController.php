@@ -28,6 +28,31 @@ class CommunityChatController extends Controller
         ], 200);
     }
 
+    public function detail($id)
+    {
+        $chat = CommunityChat::with('user:id,name')->find($id);
+
+        if (!$chat) {
+            return response()->json([
+                'meta' => [
+                    'status' => 'error',
+                    'statusCode' => 404,
+                    'message' => 'Community chat tidak ditemukan'
+                ],
+                'data' => null
+            ], 404);
+        }
+
+        return response()->json([
+            'meta' => [
+                'status' => 'success',
+                'statusCode' => 200,
+                'message' => 'Detail community chat berhasil diambil'
+            ],
+            'data' => $chat
+        ], 200);
+    }
+
     /**
      * Store new community chat
      */

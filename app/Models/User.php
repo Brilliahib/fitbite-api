@@ -76,4 +76,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(WeeklyProgress::class);
     }
+
+    public function communityChatAnswers()
+    {
+        return $this->hasMany(CommunityChatAnswer::class);
+    }
 }
